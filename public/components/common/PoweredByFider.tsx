@@ -18,7 +18,7 @@ export const PoweredByFider = (props: PoweredByFiderProps) => {
 
   return (
     <div className={className} data-slot={props.slot}>
-      <a rel="noopener" className="text-2xs" href="https://github.com/qminati/readypixl-feedback" target="_blank">
+      <a rel="noopener" className="text-2xs text-muted" href="https://github.com/qminati/readypixl-feedback" target="_blank">
         Source code
       </a>
     </div>

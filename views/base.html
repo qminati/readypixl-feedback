@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ .public.settings.locale }}" dir="{{ .public.settings.localeDirection }}" data-theme="light">
+<html lang="{{ .public.settings.locale }}" dir="{{ .public.settings.localeDirection }}" data-theme="dark">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -57,7 +57,7 @@
               const newUrl = `${window.location.pathname}?${params.toString()}`
               window.history.replaceState({}, "", newUrl)
             } else {
-              theme = localStorage.getItem("theme") || "light"
+              theme = localStorage.getItem("theme") || "dark"
             }
 
             if (theme == "light" || theme == "dark") {
@@ -65,7 +65,7 @@
             }
           }
         } catch (e) {
-          document.body.setAttribute("data-theme", "light")
+          document.body.setAttribute("data-theme", "dark")
         }
       })()
     </script>
