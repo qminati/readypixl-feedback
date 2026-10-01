@@ -1,0 +1,14 @@
+// ReadyPixl fork: brand additions on top of Fider's styles.
+// (Fider already ships Inter, the typeface readypixl.com uses, via the inter-ui package.)
+
+// The ReadyPixl gradient (magenta → cyan → yellow) as a thin bar across the top of the header.
+#c-header {
+  background-image: linear-gradient(to right, #c50c71, #218acb, #f6c41f);
+  background-size: 100% 3px;
+  background-repeat: no-repeat;
+  background-position: top left;
+}
+
+.c-header__brand .c-rp-logo {
+  margin-right: 2px;
+}

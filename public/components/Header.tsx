@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { SignInModal, RSSModal, TenantLogo, NotificationIndicator, UserMenu, ThemeSwitcher, Icon, Button, ModerationIndicator } from "@fider/components"
 import { useFider } from "@fider/hooks"
 import { HStack } from "./layout"
+import { ReadyPixlLogo } from "./ReadyPixlLogo"
 import { Trans } from "@lingui/react/macro"
 import { i18n } from "@lingui/core"
 import IconRss from "@fider/assets/images/heroicons-rss.svg"
@@ -41,6 +42,7 @@ export const Header = (props: HeaderProps) => {
         <div className="container c-header__container">
           <div className="c-header__row">
             <a href="/" className="c-header__brand flex flex-x flex-items-center flex--spacing-2 h-8">
+              <ReadyPixlLogo size={30} />
               <TenantLogo size={100} />
               <h1 className="text-header">{fider.session.tenant.name}</h1>
             </a>

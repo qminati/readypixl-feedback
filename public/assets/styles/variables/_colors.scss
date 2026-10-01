@@ -1,15 +1,16 @@
+// ReadyPixl fork: neutrals follow readypixl.com's light theme (zinc scale, #171717 text).
 $light-colors: (
   "gray": (
-    "100": #fcfafa,
-    "200": #eeebeb,
-    "300": #e0dcdd,
-    "400": #d2cdcf,
-    "500": #c4bec0,
-    "600": #9d9598,
-    "700": #756e71,
-    "800": #4e474b,
-    "900": #262225,
-    "50": #f9fafb,
+    "100": #f6f6f7,
+    "200": #e4e4e7,
+    "300": #d4d4d8,
+    "400": #c4c4c9,
+    "500": #a1a1aa,
+    "600": #71717a,
+    "700": #52525b,
+    "800": #3f3f46,
+    "900": #171717,
+    "50": #fafafa,
   ),
   "green": (
     "900": #14532d,
@@ -60,11 +61,12 @@ $light-colors: (
     "100": #fee2e2,
     "50": #fef2f2,
   ),
+  // ReadyPixl brand magenta (#c50c71, hover #a30a5e), as on readypixl.com.
   "primary": (
-    "light": var(--primary-color-light, #c2c4ff),
-    "base": var(--primary-color, #2d57ed),
-    "dark": var(--primary-color-dark, #03308a),
+    "light": var(--primary-color-light, #fbe3ef),
+    "base": var(--primary-color, #c50c71),
+    "dark": var(--primary-color-dark, #a30a5e),
   ),
   "white": #fff,
-  "black": #262225,
+  "black": #171717,
 );

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/getfider/fider/app/pkg/env"
+	"github.com/getfider/fider/app/pkg/readypixl"
 	"github.com/getfider/fider/app/pkg/web"
 )
 
@@ -25,6 +26,10 @@ func Secure() web.MiddlewareFunc {
 			analyticsScript, analyticsConnect := "", ""
 			if env.Config.GoogleAnalytics != "" {
 				analyticsScript, analyticsConnect = web.CspGoogleAnalyticsScript, web.CspGoogleAnalyticsConnect
+			}
+			// ReadyPixl fork: the sign-in card talks to ReadyPixl's Supabase project.
+			if supabaseURL := readypixl.SupabaseURL(); supabaseURL != "" {
+				analyticsConnect += " " + supabaseURL
 			}
 			csp := fmt.Sprintf(web.CspPolicyTemplate, c.ContextID(), cdnHost, analyticsScript, analyticsConnect)
 

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 	"time"
 
@@ -36,7 +37,7 @@ func ReadyPixlSignInStart() web.HandlerFunc {
 	return func(c *web.Context) error {
 		redirect := readypixl.SafeRedirect(c.QueryParam("redirect"))
 		if !readypixl.Enabled() {
-			return c.Redirect("/signin")
+			return c.Redirect("/signin?redirect=" + url.QueryEscape(redirect))
 		}
 		return c.Redirect(readypixl.StartURL(c.BaseURL(), redirect, "login"))
 	}

@@ -1,15 +1,16 @@
+// ReadyPixl fork: surfaces follow readypixl.com's dark theme (#0a0a0c page, #0e0e11 panels).
 $dark-colors: (
   "gray": (
-    "100": #2e2e2e,
-    "200": #3a3a3a,
-    "300": #474747,
-    "400": #545454,
-    "500": #616161,
-    "600": #838383,
-    "700": #a0a0a0,
-    "800": #c1c1c1,
-    "900": #fefefe,
-    "50": #1a1a1a,
+    "100": #15151a,
+    "200": #1d1d24,
+    "300": #27272f,
+    "400": #3f3f46,
+    "500": #52525b,
+    "600": #71717a,
+    "700": #a1a1aa,
+    "800": #d4d4d8,
+    "900": #fafafa,
+    "50": #0a0a0c,
   ),
   "green": (
     "100": #0a3d1a,
@@ -60,10 +61,10 @@ $dark-colors: (
     "50": #4a1a1a,
   ),
   "primary": (
-    "light": var(--primary-color-light, #9eacfc),
-    "base": var(--primary-color, #7aa8ff),
-    "dark": var(--primary-color-dark, #6893e3),
+    "light": var(--primary-color-light, #3b0a24),
+    "base": var(--primary-color, #c50c71),
+    "dark": var(--primary-color-dark, #a30a5e),
   ),
-  "white": #1a1a1a,
-  "black": #d3d3d3,
+  "white": #0e0e11,
+  "black": #e4e4e7,
 );

@@ -6,6 +6,9 @@
   "dependencies": {
     "@lingui/format-json": "^5.1.2",
     "@lingui/react": "^5.1.2",
+    "@supabase/auth-ui-react": "^0.4.7",
+    "@supabase/auth-ui-shared": "^0.1.8",
+    "@supabase/supabase-js": "^2.117.2",
     "@tiptap/extension-image": "3.31.3",
     "@tiptap/extension-link": "3.31.3",
     "@tiptap/extension-mention": "3.31.3",

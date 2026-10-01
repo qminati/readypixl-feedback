@@ -121,9 +121,11 @@ func routes(r *web.Engine) *web.Engine {
 	r.Get("/llms-full.txt", handlers.LlmsTXT(true))
 	r.Get("/sso/readypixl", handlers.ReadyPixlSSO())
 	r.Get("/sso/readypixl/start", handlers.ReadyPixlSignInStart())
+	r.Post("/_api/readypixl/session", handlers.ReadyPixlSession())
 	r.Use(middlewares.ReadyPixlSilentSignIn())
 
-	r.Get("/signin", handlers.SignInPage())
+	// ReadyPixl fork: /signin is the readypixl.com sign-in card (ReadyPixl accounts only).
+	r.Get("/signin", handlers.ReadyPixlSignInPage())
 	r.Get("/signin/complete", handlers.CompleteSignInProfilePage())
 	r.Get("/loginemailsent", handlers.LoginEmailSentPage())
 	r.Get("/not-invited", handlers.NotInvitedPage())
