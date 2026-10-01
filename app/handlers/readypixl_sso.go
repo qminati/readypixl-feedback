@@ -25,6 +25,9 @@ type readyPixlClaims struct {
 	Email         string `json:"email"`
 	EmailVerified bool   `json:"email_verified"`
 	Name          string `json:"name"`
+	// Team is set by the ReadyPixl app for its team accounts (server-only app_metadata.developer).
+	// Not used to grant any role yet: board admins come only from READYPIXL_ADMIN_EMAILS.
+	Team bool `json:"team"`
 	jwtgo.RegisteredClaims
 }
 
@@ -47,8 +50,10 @@ func ReadyPixlSSO() web.HandlerFunc {
 		redirect := readypixl.SafeRedirect(c.QueryParam("redirect"))
 		readypixl.MarkChecked(c, 30*time.Minute)
 
+		// Accepting a pass only needs the shared secret; Enabled() also needs the
+		// ReadyPixl address, which only the outgoing bounce uses.
 		token := c.QueryParam("token")
-		if token == "" || !readypixl.Enabled() {
+		if token == "" || readypixl.Secret() == "" {
 			return c.Redirect(redirect)
 		}
 
