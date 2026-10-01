@@ -1,3 +1,3 @@
 # Terms of Service
 
-THIS IS A PLACEHOLDER FOR TERMS OF SERVICE. REPLACE WITH YOUR OWN.
+This feedback board is run by ReadyPixl. The ReadyPixl terms of service apply: [readypixl.com/terms](https://www.readypixl.com/terms).
