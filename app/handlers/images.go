@@ -1,0 +1,221 @@
+package handlers
+
+import (
+	"bytes"
+	"context"
+	"errors"
+	"fmt"
+	"image/color"
+	"image/png"
+	"net/http"
+	"os"
+	"strings"
+	"time"
+
+	"github.com/getfider/fider/app/models/cmd"
+	"github.com/getfider/fider/app/models/dto"
+	"github.com/getfider/fider/app/models/query"
+
+	"github.com/getfider/fider/app/pkg/bus"
+	"github.com/getfider/fider/app/pkg/crypto"
+	"github.com/getfider/fider/app/pkg/env"
+	"github.com/getfider/fider/app/pkg/log"
+	"github.com/getfider/fider/app/pkg/validate"
+	"github.com/getfider/fider/app/pkg/web"
+	"github.com/goenning/imagic"
+	"github.com/goenning/letteravatar"
+)
+
+// LetterAvatar returns a letter gravatar picture based on given name
+func LetterAvatar() web.HandlerFunc {
+	return func(c *web.Context) error {
+		id := c.Param("id")
+		name := c.Param("name")
+		if name == "" {
+			name = "?"
+		}
+
+		size, err := c.QueryParamAsInt("size")
+		if err != nil {
+			return c.BadRequest(web.Map{})
+		}
+		size = between(size, 50, 200)
+
+		img, err := letteravatar.Draw(size, strings.ToUpper(letteravatar.Extract(name)), &letteravatar.Options{
+			PaletteKey: fmt.Sprintf("%s:%s", id, name),
+		})
+		if err != nil {
+			return c.Failure(err)
+		}
+
+		buf := new(bytes.Buffer)
+		err = png.Encode(buf, img)
+		if err != nil {
+			return c.Failure(err)
+		}
+
+		return c.Image("image/png", buf.Bytes())
+	}
+}
+
+// Gravatar returns a gravatar picture of fallsback to letter avatar based on name
+func Gravatar() web.HandlerFunc {
+	return func(c *web.Context) error {
+		id, err := c.ParamAsInt("id")
+		if err != nil {
+			return c.NotFound()
+		}
+
+		size, err := c.QueryParamAsInt("size")
+		if err != nil {
+			return c.BadRequest(web.Map{})
+		}
+
+		size = between(size, 50, 200)
+
+		if err == nil && id > 0 {
+			userByID := &query.GetUserByID{UserID: id, TenantID: c.Tenant().ID}
+			err := bus.Dispatch(c, userByID)
+			if err == nil && userByID.Result.Tenant.ID == c.Tenant().ID {
+				if userByID.Result.Email != "" {
+					url := fmt.Sprintf("https://www.gravatar.com/avatar/%s?s=%d&d=404", crypto.MD5(strings.ToLower(userByID.Result.Email)), size)
+					cacheKey := fmt.Sprintf("gravatar:%s", url)
+
+					//If gravatar was found in cache
+					if image, found := c.Engine().Cache().Get(cacheKey); found {
+						log.Debugf(c, "Gravatar found in cache: @{GravatarURL}", dto.Props{
+							"GravatarURL": cacheKey,
+						})
+						imageInBytes := image.([]byte)
+						return c.Image(http.DetectContentType(imageInBytes), imageInBytes)
+					}
+
+					log.Debugf(c, "Requesting gravatar: @{GravatarURL}", dto.Props{
+						"GravatarURL": url,
+					})
+
+					req := &cmd.HTTPRequest{
+						URL:    url,
+						Method: "GET",
+					}
+					err := bus.Dispatch(c, req)
+					if err == nil && req.ResponseStatusCode == http.StatusOK {
+						bytes := req.ResponseBody
+						c.Engine().Cache().Set(cacheKey, bytes, 24*time.Hour)
+						return c.Image(http.DetectContentType(bytes), bytes)
+					}
+				}
+			}
+		}
+
+		return LetterAvatar()(c)
+	}
+}
+
+// Favicon returns the Fider favicon by given size
+func Favicon() web.HandlerFunc {
+	return func(c *web.Context) error {
+		var (
+			bytes       []byte
+			err         error
+			contentType string
+		)
+
+		bkey := c.Param("bkey")
+		if bkey != "" {
+			q := &query.GetBlobByKey{Key: bkey}
+			err := bus.Dispatch(c, q)
+			if err != nil {
+				return c.Failure(err)
+			}
+			bytes = q.Result.Content
+			contentType = q.Result.ContentType
+		} else {
+			bytes, err = os.ReadFile(env.Path("favicon.png"))
+			contentType = "image/png"
+			if err != nil {
+				return c.Failure(err)
+			}
+		}
+
+		size, err := c.QueryParamAsInt("size")
+		if err != nil {
+			return c.BadRequest(web.Map{})
+		}
+
+		size = between(size, 50, 200)
+
+		opts := []imagic.ImageOperation{}
+		if size > 0 {
+			opts = append(opts, imagic.Padding(size*10/100))
+			opts = append(opts, imagic.Resize(size))
+		}
+
+		if c.QueryParam("bg") != "" {
+			opts = append(opts, imagic.ChangeBackground(color.White))
+		}
+
+		if bkey == "" {
+			// Bundled favicon is a trusted asset, no need to check the decode budget
+			result, err := validate.ApplyTrusted(c, bytes, opts...)
+			return serveProcessedImage(c, contentType, bytes, result, err)
+		}
+
+		result, err := validate.SafeApply(c, bytes, opts...)
+		return serveProcessedImage(c, contentType, bytes, result, err)
+	}
+}
+
+// ViewUploadedImage returns any uploaded image by given ID and size
+func ViewUploadedImage() web.HandlerFunc {
+	return func(c *web.Context) error {
+		bkey := c.Param("bkey")
+
+		size, err := c.QueryParamAsInt("size")
+		if err != nil {
+			return c.BadRequest(web.Map{})
+		}
+
+		size = between(size, 0, 2000)
+
+		q := &query.GetBlobByKey{Key: bkey}
+		err = bus.Dispatch(c, q)
+		if err != nil {
+			return c.Failure(err)
+		}
+
+		if size == 0 {
+			return c.Image(q.Result.ContentType, q.Result.Content)
+		}
+
+		// Returns the original content without decoding it if it's already within size
+		result, err := validate.SafeResize(c, q.Result.Content, size)
+		return serveProcessedImage(c, q.Result.ContentType, q.Result.Content, result, err)
+	}
+}
+
+// serveProcessedImage responds with the result of processing (resizing etc) an image.
+//   - If the request was cancelled, nothing is logged or written.
+//   - If too many images are being processed, responds with a (non cached) 503, rather
+//     than the original image, which would be cached by clients/CDNs as the resized one.
+//   - Otherwise, if the image couldn't be processed (too large to be safely decoded, a
+//     format we don't process, or corrupt pixel data after a valid header), the original
+//     image is served unchanged. These are properties of the image itself, so caching is fine.
+func serveProcessedImage(c *web.Context, contentType string, original, result []byte, err error) error {
+	if err == nil {
+		return c.Image(contentType, result)
+	}
+	if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+		return nil
+	}
+	if errors.Is(err, validate.ErrDecodeBusy) {
+		c.Response.Header().Set("Retry-After", "5")
+		return c.Blob(http.StatusServiceUnavailable, "text/plain; charset=utf-8", []byte(http.StatusText(http.StatusServiceUnavailable)))
+	}
+	if !errors.Is(err, validate.ErrImageTooLarge) && !errors.Is(err, imagic.ErrNotSupported) {
+		log.Debugf(c, "Failed to process image, serving original: @{Error}", dto.Props{
+			"Error": err.Error(),
+		})
+	}
+	return c.Image(contentType, original)
+}
