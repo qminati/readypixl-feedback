@@ -51,6 +51,9 @@ export const Header = (props: HeaderProps) => {
               <a href="/roadmap" className={`c-header__nav-link ${isRoadmapActive ? "c-header__nav-link--active" : ""}`}>
                 <Trans id="header.nav.roadmap">Roadmap</Trans>
               </a>
+              <a href="https://helpcenter.readypixl.com" className="c-header__nav-link">
+                <Trans id="header.nav.helpcenter">Help Center</Trans>
+              </a>
             </HStack>
             {fider.session.isAuthenticated && (
               <div className="c-header__moderation">
