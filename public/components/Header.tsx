@@ -56,6 +56,9 @@ export const Header = (props: HeaderProps) => {
               <a href="https://helpcenter.readypixl.com" className="c-header__nav-link">
                 <Trans id="header.nav.helpcenter">Help Center</Trans>
               </a>
+              <a href="https://www.readypixl.com" className="c-header__nav-link">
+                <Trans id="header.nav.app">Open ReadyPixl</Trans>
+              </a>
             </HStack>
             {fider.session.isAuthenticated && (
               <div className="c-header__moderation">
