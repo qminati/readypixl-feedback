@@ -3,8 +3,10 @@
 .c-powered {
   text-align: center;
 
+  // ReadyPixl fork: muted gray like readypixl.com's small links (was Fider blue).
   a {
-    color: var(--colors-blue-700);
+    color: var(--colors-gray-600);
+    text-decoration: underline;
   }
   a:hover {
     color: var(--colors-gray-900);
