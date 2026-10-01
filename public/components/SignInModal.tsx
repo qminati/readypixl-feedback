@@ -1,5 +1,5 @@
 import React from "react"
-import { Modal, SignInControl, LegalFooter, TenantLogo } from "@fider/components"
+import { Modal, LegalFooter, TenantLogo, Button } from "@fider/components"
 import { CloseIcon } from "./common"
 import { Trans } from "@lingui/react/macro"
 import { HStack, VStack } from "./layout"
@@ -9,12 +9,10 @@ interface SignInModalProps {
   onClose: () => void
 }
 
+// ReadyPixl fork: the board has no login of its own; people sign in with their ReadyPixl account.
 export const SignInModal: React.FC<SignInModalProps> = (props) => {
-  const onCodeVerified = (): void => {
-    // User is authenticated - close modal and reload to refresh the page
-    props.onClose()
-    location.reload()
-  }
+  const redirect = typeof window !== "undefined" ? window.location.pathname + window.location.search : "/"
+  const signInURL = `/sso/readypixl/start?redirect=${encodeURIComponent(redirect)}`
 
   return (
     <Modal.Window isOpen={props.isOpen} onClose={props.onClose}>
@@ -30,7 +28,14 @@ export const SignInModal: React.FC<SignInModalProps> = (props) => {
         </VStack>
       </Modal.Header>
       <Modal.Content>
-        <SignInControl useEmail={true} onCodeVerified={onCodeVerified} />
+        <VStack spacing={4}>
+          <Button variant="primary" href={signInURL}>
+            <Trans id="modal.signin.readypixl">Continue with ReadyPixl</Trans>
+          </Button>
+          <p className="text-muted text-sm">
+            <Trans id="modal.signin.readypixl.hint">Use the same account you use in the ReadyPixl app.</Trans>
+          </p>
+        </VStack>
       </Modal.Content>
       <LegalFooter />
     </Modal.Window>

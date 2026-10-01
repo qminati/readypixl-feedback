@@ -21,6 +21,19 @@ var ErrNoChanges = stdErrors.New("nothing to migrate")
 // Migrate the database to latest version
 func Migrate(ctx context.Context, path string) error {
 	log.Info(ctx, "Running migrations...")
+
+	// ReadyPixl fork: on Vercel several container instances can start at once.
+	// A session advisory lock makes them apply migrations one at a time.
+	lockConn, err := conn.Conn(ctx)
+	if err != nil {
+		return errors.Wrap(err, "failed to open migration lock connection")
+	}
+	defer lockConn.Close()
+	if _, err := lockConn.ExecContext(ctx, "SELECT pg_advisory_lock(7253110)"); err != nil {
+		return errors.Wrap(err, "failed to acquire migration lock")
+	}
+	defer func() { _, _ = lockConn.ExecContext(context.Background(), "SELECT pg_advisory_unlock(7253110)") }()
+
 	dir, err := os.Open(env.Path(path))
 	if err != nil {
 		return errors.Wrap(err, "failed to open dir '%s'", path)

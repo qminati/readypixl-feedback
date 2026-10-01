@@ -116,6 +116,13 @@ func routes(r *web.Engine) *web.Engine {
 	// If tenant is pending, block it from using any other route
 	r.Use(middlewares.BlockPendingTenants())
 
+	// ReadyPixl additions: AI-readable board, and sign-in through the ReadyPixl login
+	r.Get("/llms.txt", handlers.LlmsTXT(false))
+	r.Get("/llms-full.txt", handlers.LlmsTXT(true))
+	r.Get("/sso/readypixl", handlers.ReadyPixlSSO())
+	r.Get("/sso/readypixl/start", handlers.ReadyPixlSignInStart())
+	r.Use(middlewares.ReadyPixlSilentSignIn())
+
 	r.Get("/signin", handlers.SignInPage())
 	r.Get("/signin/complete", handlers.CompleteSignInProfilePage())
 	r.Get("/loginemailsent", handlers.LoginEmailSentPage())

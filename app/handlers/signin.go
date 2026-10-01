@@ -14,6 +14,7 @@ import (
 	"github.com/getfider/fider/app/models/query"
 	"github.com/getfider/fider/app/pkg/bus"
 	"github.com/getfider/fider/app/pkg/errors"
+	"github.com/getfider/fider/app/pkg/readypixl"
 	"github.com/getfider/fider/app/pkg/web"
 	webutil "github.com/getfider/fider/app/pkg/web/util"
 	"github.com/getfider/fider/app/tasks"
@@ -426,6 +427,8 @@ func CompleteSignInProfile() web.HandlerFunc {
 func SignOut() web.HandlerFunc {
 	return func(c *web.Context) error {
 		c.RemoveCookie(web.CookieAuthName)
+		// Do not sign the user straight back in through their ReadyPixl session.
+		readypixl.MarkChecked(c, 12*time.Hour)
 		return c.Redirect("/")
 	}
 }

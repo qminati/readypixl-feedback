@@ -26,6 +26,10 @@ export const PoweredByFider = (props: PoweredByFiderProps) => {
       <a rel="noopener" className="text-2xs" href={`https://fider.io?utm_source=${source}&utm_medium=${medium}&utm_campaign=${campaign}`} target="_blank">
         Powered by Fider ⚡
       </a>
+      {/* AGPL-3.0: this board runs a modified Fider, so its source is offered to every visitor. */}
+      <a rel="noopener" className="text-2xs block" href="https://github.com/qminati/readypixl-feedback" target="_blank">
+        Source code
+      </a>
       {versionString && <span className="text-2xs block">{versionString}</span>}
     </div>
   )
