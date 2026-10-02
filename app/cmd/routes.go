@@ -148,7 +148,8 @@ func routes(r *web.Engine) *web.Engine {
 	r.Use(middlewares.CheckTenantPrivacy())
 
 	r.Get("/", handlers.Index())
-	r.Get("/roadmap", handlers.RoadmapPage())
+	// Roadmap hidden for now (Jose 2026-10-02); restore handlers.RoadmapPage() to bring it back.
+	r.Get("/roadmap", func(c *web.Context) error { return c.Redirect("/") })
 	r.Get("/posts/:number", handlers.PostDetails())
 	r.Get("/posts/:number/:slug", handlers.PostDetails())
 

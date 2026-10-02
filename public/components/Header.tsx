@@ -18,8 +18,8 @@ export const Header = (props: HeaderProps) => {
   const [isRSSModalOpen, setIsRSSModalOpen] = useState(false)
 
   const pathname = typeof window !== "undefined" ? window.location.pathname : "/"
-  const isRoadmapActive = pathname === "/roadmap"
-  const isFeedbackActive = !isRoadmapActive
+  // Roadmap tab hidden for now (Jose 2026-10-02).
+  const isFeedbackActive = pathname !== "/roadmap"
 
   const handleSignInClick = () => {
     setIsSignInModalOpen(true)
@@ -49,9 +49,6 @@ export const Header = (props: HeaderProps) => {
             <HStack spacing={4} className="c-header__nav flex-items-center">
               <a href="/" className={`c-header__nav-link ${isFeedbackActive ? "c-header__nav-link--active" : ""}`}>
                 <Trans id="header.nav.feedback">All Feedback</Trans>
-              </a>
-              <a href="/roadmap" className={`c-header__nav-link ${isRoadmapActive ? "c-header__nav-link--active" : ""}`}>
-                <Trans id="header.nav.roadmap">Roadmap</Trans>
               </a>
               <a href="https://helpcenter.readypixl.com" className="c-header__nav-link">
                 <Trans id="header.nav.helpcenter">Help Center</Trans>
