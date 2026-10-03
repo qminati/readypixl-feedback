@@ -2,7 +2,7 @@ import "@fider/assets/styles/index.scss"
 
 import React, { Suspense } from "react"
 import { createRoot } from "react-dom/client"
-import { ErrorBoundary, Loader, ReadOnlyNotice, DevBanner } from "@fider/components"
+import { ErrorBoundary, Loader, ReadOnlyNotice, DevBanner, SiteFooter } from "@fider/components"
 import { classSet, Fider, FiderContext, actions, activateI18N } from "@fider/services"
 
 import { I18n } from "@lingui/core"
@@ -54,6 +54,7 @@ const bootstrapApp = (i18n: I18n) => {
               <DevBanner />
               <ReadOnlyNotice />
               <Suspense fallback={<Loading />}>{React.createElement(component, fider.session.props)}</Suspense>
+              <SiteFooter />
             </FiderContext.Provider>
           </I18nProvider>
         </ErrorBoundary>

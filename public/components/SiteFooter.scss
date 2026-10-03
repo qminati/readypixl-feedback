@@ -1,0 +1,31 @@
+.c-site-footer {
+  margin-top: 48px;
+  border-top: 1px solid var(--colors-gray-200);
+  font-size: 13px;
+  color: var(--colors-gray-500);
+}
+
+.c-site-footer__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.c-site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.c-site-footer a {
+  color: var(--colors-gray-500);
+  text-decoration: none;
+}
+
+.c-site-footer a:hover {
+  color: var(--colors-gray-700);
+}
