@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js"
 import type { Auth as AuthWidget } from "@supabase/auth-ui-react"
 import type { ThemeSupa as ThemeSupaTheme } from "@supabase/auth-ui-shared"
 
-import { ReadyPixlLogo } from "../../components/ReadyPixlLogo"
+import { ReadyPixlIcon } from "../../components/ReadyPixlLogo"
 import "./ReadyPixlSignIn.page.scss"
 
 // The board's sign-in is the readypixl.com sign-in: same card, same Supabase Auth UI widget,
@@ -59,8 +59,7 @@ const appearanceVariables = {
   },
 }
 
-const isDarkTheme = (): boolean =>
-  (document.body.getAttribute("data-theme") || document.documentElement.getAttribute("data-theme")) === "dark"
+const isDarkTheme = (): boolean => (document.body.getAttribute("data-theme") || document.documentElement.getAttribute("data-theme")) === "dark"
 
 const safeRedirect = (): string => {
   const redirect = new URLSearchParams(window.location.search).get("redirect")
@@ -172,7 +171,7 @@ const ReadyPixlSignInPage = (props: ReadyPixlSignInPageProps) => {
     <div className="rp-signin" data-auth-state={authState}>
       <div className="rp-signin__card">
         <div className="rp-signin__head">
-          <ReadyPixlLogo size={48} />
+          <ReadyPixlIcon size={48} />
           <h1>Sign in to ReadyPixl</h1>
           <p>Continue with your account</p>
         </div>
